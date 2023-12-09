@@ -10,12 +10,14 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
+//GO_NOTE// we can organise variables (var, const, etc.) into blocks
 const (
 	width  = 500
 	height = 500
     rows = 10
     columns = 10
-
+    
+    // code to be run in the GPU Driver
     vertexShaderSource = `
         #version 410
         in vec3 vp;
@@ -33,8 +35,9 @@ const (
     ` + "\x00"
 )
 
+//GO_NOTE// we can organise variables (var, const, etc.) into blocks
 var (
-	square = []float32 {
+	square = []float32 {   //GO_NOTE// array declaration of type float32
 		-0.5, 0.5, 0,
         -0.5, -0.5, 0,
 		0.5, -0.5, 0,
@@ -55,7 +58,9 @@ type cell struct {
     x int
     y int
 }
-// This is a method for the Cell struct
+//GO_NOTE// This is the syntax for creating a method
+//GO_NOTE// Pointer in the brackets refers to the object the method is for
+// c.draw() to be used within the draw() function
 func (c *cell) draw() {
     gl.BindVertexArray(c.drawable)
     gl.DrawArrays(gl.TRIANGLES, 0, int32(len(square) / 3))
@@ -230,11 +235,14 @@ func initOpenGL() uint32 {
 func draw(cells [][]*cell, window *glfw.Window, prog uint32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.UseProgram(prog)
+    
 
-    for x:= range cells {
-        for _, c := range cells[x] {
-            c.draw()
-        }
+//GO_NOTE// first return(?) value for range is the index, the second is the
+// object/value at the index
+    for x := range cells {               //GO_NOTE// x is the index
+        for _, c := range cells[x] {     // c is the object/value at the index
+           c.draw()                      // _ is used to skip the index to avoid
+        }                                // an error as it is not used 
     }
 
 	glfw.PollEvents()
