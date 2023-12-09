@@ -48,14 +48,14 @@ var (
 
 
 
-
+// Cell struct to represent each cell in the board
 type cell struct {
     drawable uint32
 
     x int
     y int
 }
-
+// This is a method for the Cell struct
 func (c *cell) draw() {
     gl.BindVertexArray(c.drawable)
     gl.DrawArrays(gl.TRIANGLES, 0, int32(len(square) / 3))
@@ -226,11 +226,16 @@ func initOpenGL() uint32 {
 
 
 
-// draw will draw the cells to visualise the game.
+// draw will draw the cells, using the cells method, to visualise the game
 func draw(cells [][]*cell, window *glfw.Window, prog uint32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.UseProgram(prog)
 
+    for x:= range cells {
+        for _, c := range cells[x] {
+            c.draw()
+        }
+    }
 
 	glfw.PollEvents()
 	window.SwapBuffers()
