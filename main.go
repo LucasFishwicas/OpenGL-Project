@@ -278,10 +278,15 @@ func initGlfw() *glfw.Window {
 		panic(err)
 	}
 
+    // Allow window to be resized
 	glfw.WindowHint(glfw.Resizable, glfw.False)
+    // ContextVersionMajor and ContextVersionMinor refer to the OpenGL Version,
+    // which is version 4.1 (major.minor)
 	glfw.WindowHint(glfw.ContextVersionMajor, 4)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
+    // OpenGLProfile refers to which type of OpenGL we want to use, Core is current
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
+    // Compatible with future versions?
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
 	window, err := glfw.CreateWindow(width, height, "Conway's Game of Life", nil, nil)
