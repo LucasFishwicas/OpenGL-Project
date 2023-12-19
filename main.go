@@ -1,12 +1,12 @@
 package main
 
 import (
-    "time"
 	"fmt"
 	"log"
 	"math/rand"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -148,6 +148,7 @@ func (c *cell) liveNeighbours(cells [][]*cell) int {
 
 
 func main() {
+    // GLFW apparently only works (well or at all?) in a single thread
 	runtime.LockOSThread()
 
 	window := initGlfw()
@@ -155,25 +156,42 @@ func main() {
 
 	program := initOpenGL()
 
-	//vao := makeVao(square)
     cells := makeCells()
 
 
     // Loop terminates when the window is closed
 	for !window.ShouldClose() { 
-     //   t := time.Now()
 
+        // process keyboard input
+        processInput(window)
+
+        // update state of each cell in the window
         for x := range cells {
             for _, c := range cells[x] {
                 c.checkState(cells)
             }
         }
 
+        // display updated cells
         draw(cells, window, program)        
 
-       // time.Sleep(time.Second/time.Duration(fps) - time.Since(t))
 	}
 }
+
+
+
+
+
+
+// processInput processes keyboard inputs
+func processInput (window *glfw.Window) {
+    // terminate window when escape key is pressed
+    if(window.GetKey(glfw.KeyEscape) == glfw.Press) {
+        window.SetShouldClose(true)
+    }
+}
+
+
 
 
 
@@ -288,7 +306,14 @@ func initGlfw() *glfw.Window {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
     // Compatible with future versions?
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
-
+    // Give input focus when created
+    glfw.WindowHint(glfw.Focused, glfw.True)
+    // Make window topmost/floating over regular windows
+    glfw.WindowHint(glfw.Floating, glfw.True)
+    // Window will be maximised when create
+    //glfw.WindowHint(glfw.Maximized, glfw.True)
+    // Scale to monitor doesnt seem to be available (in the LSP)
+    
 	window, err := glfw.CreateWindow(width, height, "Conway's Game of Life", nil, nil)
 	if err != nil {
 		panic(err)
